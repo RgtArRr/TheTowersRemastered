@@ -20,7 +20,6 @@ package me.PauMAVA.TTR.match;
 
 import me.PauMAVA.TTR.TTRCore;
 import me.PauMAVA.TTR.teams.TTRTeam;
-import me.PauMAVA.TTR.ui.TTRScoreboard;
 import me.PauMAVA.TTR.util.TTRPrefix;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -32,7 +31,7 @@ import java.util.List;
 
 public class CageChecker {
 
-    private List<Cage> cages = new ArrayList<Cage>();
+    public List<Cage> cages = new ArrayList<>();
     private int checkerTaskPID;
 
 
@@ -40,6 +39,7 @@ public class CageChecker {
         this.checkerTaskPID = new BukkitRunnable(){
             @Override
             public void run() {
+                if (TTRCore.getInstance().getCurrentMatch().getStatus().equals(MatchStatus.ENDED)) { return; }
                 for(Player p: Bukkit.getServer().getOnlinePlayers()) {
                     for(Cage cage: cages) {
                         Location particleLocation = new Location(cage.getLocation().getWorld(), cage.getLocation().getBlockX(), cage.getLocation().getBlockY() + 1, cage.getLocation().getBlockZ());
@@ -70,7 +70,7 @@ public class CageChecker {
         player.teleport(TTRCore.getInstance().getConfigManager().getTeamSpawn(playersTeam.getIdentifier()));
         playersTeam.addPoints(1);
         TTRCore.getInstance().getScoreboard().refreshScoreboard();
-        Bukkit.broadcastMessage(TTRPrefix.TTR_GAME + "" + ChatColor.GRAY + player.getName() + " has scored a point!");
+        Bukkit.broadcastMessage(TTRPrefix.TTR_GAME + "" + ChatColor.GRAY + player.getName() + " ha anotado un punto!");
         for(Player p: Bukkit.getServer().getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 1);
         }

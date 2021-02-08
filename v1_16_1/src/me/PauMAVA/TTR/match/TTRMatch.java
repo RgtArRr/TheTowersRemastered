@@ -20,8 +20,8 @@ package me.PauMAVA.TTR.match;
 
 import me.PauMAVA.TTR.TTRCore;
 import me.PauMAVA.TTR.teams.TTRTeam;
-import net.minecraft.server.v1_16_R1.PacketPlayInClientCommand;
-import net.minecraft.server.v1_16_R1.PacketPlayInClientCommand.EnumClientCommand;
+import net.minecraft.server.v1_16_R3.PacketPlayInClientCommand;
+import net.minecraft.server.v1_16_R3.PacketPlayInClientCommand.EnumClientCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Difficulty;
@@ -31,11 +31,15 @@ import org.bukkit.Color;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
@@ -45,7 +49,7 @@ public class TTRMatch {
 
     private MatchStatus status;
     private LootSpawner lootSpawner;
-    private CageChecker checker;
+    public CageChecker checker;
     private HashMap<Player, Integer> kills = new HashMap<Player, Integer>();
 
     public TTRMatch(MatchStatus initialStatus) {
@@ -65,11 +69,11 @@ public class TTRMatch {
         this.lootSpawner.startSpawning();
         TTRCore.getInstance().getWorldHandler().configureTime();
         TTRCore.getInstance().getWorldHandler().configureWeather();
-        TTRCore.getInstance().getWorldHandler().setWorldDifficulty(Difficulty.PEACEFUL);
+        TTRCore.getInstance().getWorldHandler().setWorldDifficulty(Difficulty.HARD);
         TTRCore.getInstance().getScoreboard().startScoreboardTask();
-        for(Player player: Bukkit.getServer().getOnlinePlayers()) {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             TTRTeam playerTeam = TTRCore.getInstance().getTeamHandler().getPlayerTeam(player);
-            if(playerTeam == null) {
+            if (playerTeam == null) {
                 continue;
             }
             player.teleport(TTRCore.getInstance().getConfigManager().getTeamSpawn(playerTeam.getIdentifier()));
@@ -83,6 +87,7 @@ public class TTRMatch {
             player.setHealth(health);
             player.setFoodLevel(20);
             player.setSaturation(20);
+            player.addPotionEffect(PotionEffectType.FAST_DIGGING.createEffect(10 * 20, 10));
             setPlayerArmor(player);
             this.kills.put(player, 0);
         }
@@ -92,10 +97,10 @@ public class TTRMatch {
         this.status = MatchStatus.ENDED;
         this.lootSpawner.stopSpawning();
         TTRCore.getInstance().getScoreboard().stopScoreboardTask();
-        for(Player player: Bukkit.getServer().getOnlinePlayers()) {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             player.setGameMode(GameMode.SPECTATOR);
             ChatColor teamColor = TTRCore.getInstance().getConfigManager().getTeamColor(team.getIdentifier());
-            player.sendTitle(teamColor + "" + ChatColor.BOLD + team.getIdentifier(), ChatColor.AQUA + "WINS!", 10, 100, 20);
+            player.sendTitle(teamColor + "" + ChatColor.BOLD + team.getIdentifier(), ChatColor.AQUA + " ha ganado!", 10, 100, 20);
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
         }
         TTRCore.getInstance().getWorldHandler().enableDayLightCycle();
@@ -104,7 +109,7 @@ public class TTRMatch {
     }
 
     public void playerDeath(Player player, Player killer) {
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             @Override
             public void run() {
                 PacketPlayInClientCommand packet = new PacketPlayInClientCommand();
@@ -118,12 +123,12 @@ public class TTRMatch {
                     e.printStackTrace();
                 }
                 TTRTeam team = TTRCore.getInstance().getTeamHandler().getPlayerTeam(player);
-                if(team != null) {
+                if (team != null) {
                     player.teleport(TTRCore.getInstance().getConfigManager().getTeamSpawn(team.getIdentifier()));
                 }
                 setPlayerArmor(player);
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10 ,1);
-                player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 10 ,1);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10, 1);
+                player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 10, 1);
                 this.cancel();
                 kills.put(killer, getKills(killer) + 1);
             }
@@ -133,15 +138,15 @@ public class TTRMatch {
     private void setPlayerArmor(Player player) {
         TTRTeam team = TTRCore.getInstance().getTeamHandler().getPlayerTeam(player);
         ChatColor color;
-        if(team != null) {
+        if (team != null) {
             color = TTRCore.getInstance().getConfigManager().getTeamColor(team.getIdentifier());
         } else {
             return;
         }
         ItemStack[] armor = new ItemStack[]{new ItemStack(Material.LEATHER_BOOTS, 1), new ItemStack(Material.LEATHER_LEGGINGS, 1), new ItemStack(Material.LEATHER_CHESTPLATE, 1), new ItemStack(Material.LEATHER_HELMET, 1)};
-        for(ItemStack itemStack: armor) {
+        for (ItemStack itemStack : armor) {
             LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();
-            Color armorColor = Color.fromRGB(0,0,0);
+            Color armorColor = Color.fromRGB(0, 0, 0);
             try {
                 meta.setColor((Color) armorColor.getClass().getDeclaredField(color.name()).get(armorColor));
             } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -151,6 +156,14 @@ public class TTRMatch {
             itemStack.setItemMeta(meta);
         }
         player.getInventory().setArmorContents(armor);
+
+        ItemStack[] content = new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), new ItemStack(Material.WOODEN_PICKAXE), new ItemStack(color.equals(ChatColor.BLUE) ? Material.BLUE_STAINED_GLASS : Material.RED_STAINED_GLASS, 16)};
+        for (ItemStack itemStack : content) {
+            ItemMeta im = itemStack.getItemMeta();
+            im.addEnchant(Enchantment.VANISHING_CURSE, 1, true);
+            itemStack.setItemMeta(im);
+            player.getInventory().addItem(itemStack);
+        }
     }
 
     public MatchStatus getStatus() {

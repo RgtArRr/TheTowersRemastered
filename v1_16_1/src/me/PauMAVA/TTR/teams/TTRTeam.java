@@ -22,14 +22,15 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TTRTeam {
 
     private String identifier;
-    private List<Player> players = new ArrayList<Player>();
+    private List<UUID> players = new ArrayList<UUID>();
     private int points = 0;
 
-    public TTRTeam(String identifier, List<Player> players) {
+    public TTRTeam(String identifier, List<UUID> players) {
         this.identifier = identifier;
         this.players = players;
     }
@@ -42,15 +43,17 @@ public class TTRTeam {
         return this.identifier;
     }
 
-    public void addPlayer(Player player) {
+    public void addPlayer(UUID player) {
         this.players.add(player);
     }
 
-    public void removePlayer(Player player) {
+    public void removePlayer(UUID player) {
+        System.out.println(this.players.size());
         this.players.remove(player);
+        System.out.println(this.players.size());
     }
 
-    public List<Player> getPlayers() {
+    public List<UUID> getPlayers() {
         return this.players;
     }
 

@@ -19,11 +19,17 @@
 package me.PauMAVA.TTR.commands;
 
 import me.PauMAVA.TTR.TTRCore;
+import me.PauMAVA.TTR.teams.TTRTeam;
 import me.PauMAVA.TTR.util.TTRPrefix;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 
 public class EnableDisableCommand implements CommandExecutor {
 
@@ -38,9 +44,37 @@ public class EnableDisableCommand implements CommandExecutor {
         if (label.equalsIgnoreCase("ttrenable")) {
             plugin.getConfigManager().setEnableOnStart(true);
             theSender.sendMessage(TTRPrefix.TTR_GAME + "" + ChatColor.GREEN + "Plugin enabled on server start. /reload or restart server to apply changes! Players should rejoin...");
-        } else if (label.equalsIgnoreCase("ttrdisable")) {
+        }
+        if (label.equalsIgnoreCase("ttrdisable")) {
             plugin.getConfigManager().setEnableOnStart(false);
             theSender.sendMessage(TTRPrefix.TTR_GAME + "" + ChatColor.RED + "Plugin disabled on server start. /reload or restart server to apply changes!");
+        }
+        if (label.equalsIgnoreCase("m")) {
+            String message = ChatColor.GOLD + "~~~~" + ChatColor.WHITE + theSender.getName() + " > " + String.join(" ", args);
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
+                if (p.isOp()) {
+                    p.sendMessage(message);
+                }
+            }
+        }
+        if (label.equalsIgnoreCase("check")) {
+            String result = ChatColor.BLUE + "Check de teams";
+            ArrayList<String> temp = new ArrayList<>();
+            for (TTRTeam t : plugin.getTeamHandler().getTeams()) {
+                temp.clear();
+                for (UUID uid : t.getPlayers()) {
+                    Player p = plugin.getServer().getPlayer(uid);
+                    temp.add(p != null ? p.getName() : "none");
+                }
+                result += "\n" + ChatColor.AQUA + t.getIdentifier() + ": " + String.join(",", temp);
+            }
+            result += "\n" + ChatColor.AQUA + "No team: ";
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
+                if (plugin.getTeamHandler().getPlayerTeam(p) == null) {
+                    result += p.getName() + " ";
+                }
+            }
+            theSender.sendMessage(result);
         }
         return false;
     }

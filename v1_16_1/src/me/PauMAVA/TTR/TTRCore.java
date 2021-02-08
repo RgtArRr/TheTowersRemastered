@@ -21,7 +21,6 @@ import me.PauMAVA.TTR.commands.EnableDisableCommand;
 import me.PauMAVA.TTR.commands.StartMatchCommand;
 import me.PauMAVA.TTR.config.TTRConfigManager;
 import me.PauMAVA.TTR.match.AutoStarter;
-import me.PauMAVA.TTR.match.LootSpawner;
 import me.PauMAVA.TTR.match.MatchStatus;
 import me.PauMAVA.TTR.match.TTRMatch;
 import me.PauMAVA.TTR.teams.TTRTeamHandler;
@@ -29,8 +28,6 @@ import me.PauMAVA.TTR.ui.TTRCustomTab;
 import me.PauMAVA.TTR.ui.TTRScoreboard;
 import me.PauMAVA.TTR.util.EventListener;
 import me.PauMAVA.TTR.world.TTRWorldHandler;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class TTRCore extends JavaPlugin {
@@ -56,7 +53,7 @@ public class TTRCore extends JavaPlugin {
             getLogger().warning("TTR is disabled on server start. Use /ttrenable to enable it on start. Make sure to be using the desired map.");
         }
         this.configManager = new TTRConfigManager(this.getConfig());
-        if(enabled) {
+        if (enabled) {
             this.customTab = new TTRCustomTab();
             this.scoreboard = new TTRScoreboard();
             this.match = new TTRMatch(MatchStatus.PREGAME);
@@ -74,6 +71,8 @@ public class TTRCore extends JavaPlugin {
         EnableDisableCommand enableDisableCommand = new EnableDisableCommand(this);
         this.getCommand("ttrenable").setExecutor(enableDisableCommand);
         this.getCommand("ttrdisable").setExecutor(enableDisableCommand);
+        this.getCommand("m").setExecutor(enableDisableCommand);
+        this.getCommand("check").setExecutor(enableDisableCommand);
         this.autoStarter = new AutoStarter(this, this.getConfig());
     }
 
@@ -82,7 +81,8 @@ public class TTRCore extends JavaPlugin {
         try {
             this.customTab.cancel();
             this.scoreboard.removeScoreboard();
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public static TTRCore getInstance() {

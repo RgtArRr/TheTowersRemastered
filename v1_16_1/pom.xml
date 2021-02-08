@@ -34,7 +34,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
-                            <mainClass>me.PauMAVA.TTR.TTRCore</mainClass>
+                            <mainClass>TTRCore</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -67,15 +67,25 @@
     </build>
     <repositories>
         <repository>
-            <id>PauMAVen</id>
-            <url>https://raw.githubusercontent.com/PauMAVA/PauMAVen/master</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>me.PauMAVA</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.16.1</version>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

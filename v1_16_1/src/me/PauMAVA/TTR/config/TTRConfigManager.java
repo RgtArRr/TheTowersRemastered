@@ -23,7 +23,6 @@ import me.PauMAVA.TTR.teams.TTRTeam;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.Hash;
 
 import java.io.File;
 import java.util.*;
@@ -111,7 +110,7 @@ public class TTRConfigManager {
     public HashMap<Location, TTRTeam> getTeamCages() {
         HashMap<Location, TTRTeam> cages = new HashMap<Location, TTRTeam>();
         for(String teamName: getTeamNames()) {
-            cages.put(getTeamCage(teamName), TTRCore.getInstance().getTeamHandler().getTeam(teamName                                                                                                                                                                                                                                            ));
+            cages.put(getTeamCage(teamName), TTRCore.getInstance().getTeamHandler().getTeam(teamName));
         }
         return cages;
     }

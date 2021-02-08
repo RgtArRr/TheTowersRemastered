@@ -52,7 +52,7 @@ public class TTRScoreboard {
                 if(totalTime != null) {
                     ttrScoreboard.resetScores(totalTime.getEntry());
                 }
-                totalTime = points.getScore(ChatColor.GREEN + "" + ChatColor.BOLD + "Total time: " + ChatColor.GRAY + prettyTime(i));
+                totalTime = points.getScore(ChatColor.GREEN + "" + ChatColor.BOLD + "Tiempo total: " + ChatColor.GRAY + prettyTime(i));
                 totalTime.setScore(-2);
                 i++;
                 refreshScoreboard();

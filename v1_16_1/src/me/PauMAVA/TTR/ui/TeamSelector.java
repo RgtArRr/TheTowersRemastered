@@ -20,7 +20,6 @@ package me.PauMAVA.TTR.ui;
 
 import me.PauMAVA.TTR.TTRCore;
 import me.PauMAVA.TTR.teams.TTRTeam;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -34,16 +33,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class TeamSelector extends CustomUI implements Listener {
 
-    private Player owner;
     private int selected = -1;
-    private String lastTeam;
 
     public TeamSelector(Player player) {
-        super(27, "Team Selection");
-        this.owner = player;
+        super(27, "Seleccion de Equipos");
         setUp();
         TTRCore.getInstance().getServer().getPluginManager().registerEvents(this, TTRCore.getInstance());
-        TTRTeam possibleTeam = TTRCore.getInstance().getTeamHandler().getPlayerTeam(this.owner);
+        TTRTeam possibleTeam = TTRCore.getInstance().getTeamHandler().getPlayerTeam(player);
         if(possibleTeam != null) {
             for(int i = 0; i < super.getInventory().getSize(); i++) {
                 ItemStack stack = super.getInventory().getItem(i);
@@ -57,14 +53,7 @@ public class TeamSelector extends CustomUI implements Listener {
                 }
             }
         }
-    }
-
-    public void openSelector() {
-        super.openUI(this.owner);
-    }
-
-    public void closeSelector() {
-        super.closeUI(this.owner);
+        openUI(player);
     }
 
     public void setUp() {
@@ -82,11 +71,12 @@ public class TeamSelector extends CustomUI implements Listener {
             setUp();
             addEnchantment(this.selected);
             String teamName = super.getInventory().getItem(this.selected).getItemMeta().getDisplayName();
-            TTRCore.getInstance().getTeamHandler().addPlayer(teamName, this.owner);
-            if(lastTeam != null) {
-                TTRCore.getInstance().getTeamHandler().removePlayer(teamName, this.owner);
+            Player p = (Player) event.getWhoClicked();
+            TTRTeam t = TTRCore.getInstance().getTeamHandler().getPlayerTeam(p);
+            if (t != null) {
+                TTRCore.getInstance().getTeamHandler().removePlayer(t.getIdentifier(), p);
             }
-            this.lastTeam = teamName;
+            TTRCore.getInstance().getTeamHandler().addPlayerToTeam(p, teamName);
         }
         if(TTRCore.getInstance().enabled() && !TTRCore.getInstance().getCurrentMatch().isOnCourse()) {
             event.setCancelled(true);

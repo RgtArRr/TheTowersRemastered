@@ -10,3 +10,7 @@ commands:
     description: Enbles the plugin on server start.
   ttrdisable:
     description: Disables the plugin on server start.
+  m:
+    description: Moderator
+  check:
+    description: Moderator

@@ -22,8 +22,6 @@ import me.PauMAVA.TTR.teams.TTRTeam;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 public class Cage {
 
     private Location location;

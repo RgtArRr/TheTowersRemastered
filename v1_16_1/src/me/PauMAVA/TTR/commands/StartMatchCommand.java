@@ -26,10 +26,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 public class StartMatchCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender theSender, Command command, String label, String[] args) {

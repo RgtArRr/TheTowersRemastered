@@ -27,7 +27,7 @@ public class TTRWorldHandler {
 
     private TTRCore plugin;
 
-    private World matchWorld;
+    public World matchWorld;
 
     private Difficulty originalDifficulty;
 

@@ -18,10 +18,12 @@
 
 package me.PauMAVA.TTR.commands;
 
+import io.papermc.paper.event.block.TargetHitEvent;
 import me.PauMAVA.TTR.TTRCore;
 import me.PauMAVA.TTR.teams.TTRTeam;
 import me.PauMAVA.TTR.util.TTRPrefix;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,6 +43,9 @@ public class EnableDisableCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender theSender, Command cmd, String label, String[] args) {
+        if (!theSender.isOp()) {
+            return true;
+        }
         if (label.equalsIgnoreCase("ttrenable")) {
             plugin.getConfigManager().setEnableOnStart(true);
             theSender.sendMessage(TTRPrefix.TTR_GAME + "" + ChatColor.GREEN + "Plugin enabled on server start. /reload or restart server to apply changes! Players should rejoin...");
@@ -75,6 +80,11 @@ public class EnableDisableCommand implements CommandExecutor {
                 }
             }
             theSender.sendMessage(result);
+        }
+        if (label.equalsIgnoreCase("beacon")) {
+            Player p = (Player) theSender;
+            p.getLocation().clone().set(0, 203, 1152).getBlock().setType(Material.BEACON);
+            p.sendMessage(ChatColor.GREEN + "Beacon placed");
         }
         return false;
     }

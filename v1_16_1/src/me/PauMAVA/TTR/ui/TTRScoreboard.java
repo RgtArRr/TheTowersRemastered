@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.*;
 public class TTRScoreboard {
 
     private ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-    private Scoreboard ttrScoreboard;
+    public Scoreboard ttrScoreboard;
     private Objective kills;
     private Objective health;
     private Objective points;

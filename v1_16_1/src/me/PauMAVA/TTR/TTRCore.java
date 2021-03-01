@@ -73,6 +73,7 @@ public class TTRCore extends JavaPlugin {
         this.getCommand("ttrdisable").setExecutor(enableDisableCommand);
         this.getCommand("m").setExecutor(enableDisableCommand);
         this.getCommand("check").setExecutor(enableDisableCommand);
+        this.getCommand("beacon").setExecutor(enableDisableCommand);
         this.autoStarter = new AutoStarter(this, this.getConfig());
     }
 

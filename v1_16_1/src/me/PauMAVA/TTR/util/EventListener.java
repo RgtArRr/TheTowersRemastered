@@ -18,21 +18,18 @@
 
 package me.PauMAVA.TTR.util;
 
+import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import me.PauMAVA.TTR.TTRCore;
 import me.PauMAVA.TTR.match.Cage;
 import me.PauMAVA.TTR.match.MatchStatus;
 import me.PauMAVA.TTR.teams.TTRTeam;
 import me.PauMAVA.TTR.teams.TTRTeamHandler;
 import me.PauMAVA.TTR.ui.TeamSelector;
-import net.minecraft.data.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -46,6 +43,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ListIterator;
 import java.util.UUID;
 
 public class EventListener implements Listener {
@@ -139,6 +137,13 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (TTRCore.getInstance().enabled() && TTRCore.getInstance().getCurrentMatch().isOnCourse()) {
+            ListIterator<ItemStack> iter = event.getDrops().listIterator();
+            while (iter.hasNext()) {
+                if (iter.next().getType().equals(Material.BEACON)) {
+                    iter.remove();
+                    event.getEntity().getLocation().clone().set(0, 203, 1152).getBlock().setType(Material.BEACON);
+                }
+            }
             TTRCore.getInstance().getCurrentMatch().playerDeath(event.getEntity(), event.getEntity().getKiller());
         }
     }
@@ -183,7 +188,7 @@ public class EventListener implements Listener {
     @EventHandler
     public void onFood(FoodLevelChangeEvent event) {
         event.setFoodLevel(20);
-        ((Player)event.getEntity()).setSaturation(20);
+        ((Player) event.getEntity()).setSaturation(20);
     }
 
     @EventHandler
@@ -207,6 +212,26 @@ public class EventListener implements Listener {
         }
     }
 
-    
+    @EventHandler
+    public void onBeacon(BeaconEffectEvent event) {
+        Location b = event.getBlock().getLocation();
+        TTRTeam playerTeam = TTRCore.getInstance().getTeamHandler().getPlayerTeam(event.getPlayer());
+        event.setCancelled(true);
+        if (playerTeam != null) {
+            ChatColor color = TTRCore.getInstance().getConfigManager().getTeamColor(playerTeam.getIdentifier());
+            if (b.getX() == -49 && b.getY() == 205 && b.getZ() == 1152) {
+                //blue
+                if (color.equals(ChatColor.BLUE)) {
+                    event.setCancelled(false);
+                }
+            }
+            if (b.getX() == 49 && b.getY() == 205 && b.getZ() == 1152) {
+                //red
+                if (color.equals(ChatColor.RED)) {
+                    event.setCancelled(false);
+                }
+            }
+        }
+    }
 
 }

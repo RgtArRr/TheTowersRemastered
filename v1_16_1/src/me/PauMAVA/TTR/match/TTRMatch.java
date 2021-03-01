@@ -22,24 +22,20 @@ import me.PauMAVA.TTR.TTRCore;
 import me.PauMAVA.TTR.teams.TTRTeam;
 import net.minecraft.server.v1_16_R3.PacketPlayInClientCommand;
 import net.minecraft.server.v1_16_R3.PacketPlayInClientCommand.EnumClientCommand;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Difficulty;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Color;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
@@ -91,6 +87,15 @@ public class TTRMatch {
             setPlayerArmor(player);
             this.kills.put(player, 0);
         }
+        ItemStack itemStack = new ItemStack(Material.POTION);
+        PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
+        potionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 3 * 60, 0), true);
+        potionMeta.setDisplayName(ChatColor.AQUA + "Invisibilidad");
+        itemStack.setItemMeta(potionMeta);
+
+        World w = TTRCore.getInstance().getWorldHandler().matchWorld;
+        Item item = (Item) w.spawnEntity(new Location(w, 0.5, 205, 1152.5), EntityType.DROPPED_ITEM);
+        item.setItemStack(itemStack);
     }
 
     public void endMatch(TTRTeam team) {

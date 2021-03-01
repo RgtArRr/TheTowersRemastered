@@ -18,7 +18,8 @@
 
 package me.PauMAVA.TTR.teams;
 
-import org.bukkit.entity.Player;
+import me.PauMAVA.TTR.TTRCore;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class TTRTeam {
     private String identifier;
     private List<UUID> players = new ArrayList<UUID>();
     private int points = 0;
+    private Team teamBukkit;
 
     public TTRTeam(String identifier, List<UUID> players) {
         this.identifier = identifier;
@@ -37,6 +39,10 @@ public class TTRTeam {
 
     public TTRTeam(String identifier) {
         this.identifier = identifier;
+        teamBukkit = TTRCore.getInstance().getScoreboard().ttrScoreboard.registerNewTeam(identifier);
+        teamBukkit.setAllowFriendlyFire(false);
+        teamBukkit.setCanSeeFriendlyInvisibles(true);
+        teamBukkit.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.FOR_OWN_TEAM);
     }
 
     public String getIdentifier() {
@@ -45,12 +51,11 @@ public class TTRTeam {
 
     public void addPlayer(UUID player) {
         this.players.add(player);
+        teamBukkit.addPlayer(TTRCore.getInstance().getServer().getOfflinePlayer(player));
     }
 
     public void removePlayer(UUID player) {
-        System.out.println(this.players.size());
         this.players.remove(player);
-        System.out.println(this.players.size());
     }
 
     public List<UUID> getPlayers() {
